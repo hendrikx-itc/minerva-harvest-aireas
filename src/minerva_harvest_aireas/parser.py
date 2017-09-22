@@ -34,7 +34,10 @@ class Parser(HarvestParserTrend):
         rows = []
 
         for measurement in data:
-            timestamp_str = measurement['last_measurement']['calibrated']['when']['$date']
+            timestamp_int = measurement['last_measurement']['calibrated']['when']['$date']
+
+            timestamp = datetime.datetime.fromtimestamp(timestamp_int / 1000.0, None)
+
             readings = measurement['last_measurement']['calibrated']['readings']
             reading_values = [
                 readings.get(meas_name)
@@ -48,7 +51,7 @@ class Parser(HarvestParserTrend):
 
         yield DefaultPackage(
             create_granularity('1 day'),
-            datetime.datetime.utcnow(),
+            timestamp,
             reading_names,
             rows
         )
