@@ -11,19 +11,20 @@ class Parser(HarvestParserTrend):
         self.config = config
 
     def load_packages(self, stream, name):
-        reading_names = [
-            'AmbHum',   # 84.37
-            'PM1',      # 3.0
-            'WBGT',     # 0.0
-            'UFP',      # 0.0
-            'PM25',     # 3.0
-            'Ozon',     # 0.0
-            'PM10',     # 6.0
-            'Temp',     # 12.92
-            'RelHum',   # 57.35
-            'AmbTemp',  # 13.23
-            'NO2',      # 63.9
-            'GPS'       #
+        reading_mapppings = [
+            ('AmbHum', lambda readings: readings.get('AmbHum')),  # 84.37
+            ('PM1', lambda readings: readings.get('PM1')),      # 3.0
+            ('WBGT', lambda readings: readings.get('WBGT')),     # 0.0
+            ('UFP', lambda readings: readings.get('AmbHum')),      # 0.0
+            ('PM25', lambda readings: readings.get('AmbHum')),     # 3.0
+            ('Ozon', lambda readings: readings.get('AmbHum')),     # 0.0
+            ('PM10', lambda readings: readings.get('AmbHum')),     # 6.0
+            ('Temp', lambda readings: readings.get('AmbHum')),     # 12.92
+            ('RelHum', lambda readings: readings.get('AmbHum')),   # 57.35
+            ('AmbTemp', lambda readings: readings.get('AmbHum')),  # 13.23
+            ('NO2', lambda readings: readings.get('AmbHum')),      # 63.9
+            ('GPS.lat', lambda readings: readings.get('GPS')['lat']),
+            ('GPS.lon', lambda readings: readings.get('GPS')['lon'])  #
                         #   "lat": 5134.187115,
                         #   "lon": 449.162761
                         # }
@@ -36,12 +37,14 @@ class Parser(HarvestParserTrend):
         for measurement in data:
             timestamp_int = measurement['last_measurement']['calibrated']['when']['$date']
 
-            timestamp = datetime.datetime.fromtimestamp(timestamp_int / 1000.0, None)
+            timestamp = datetime.datetime.fromtimestamp(
+                timestamp_int / 1000.0, None
+            )
 
             readings = measurement['last_measurement']['calibrated']['readings']
             reading_values = [
-                readings.get(meas_name)
-                for meas_name in reading_names
+                mapping(readings)
+                for meas_name, mapping in reading_mapppings
             ]
 
             rows.append((
@@ -49,10 +52,12 @@ class Parser(HarvestParserTrend):
                 reading_values
             ))
 
+        trend_names = [meas_name for meas_name, mapping in reading_mapppings]
+
         yield DefaultPackage(
             create_granularity('1 day'),
             timestamp,
-            reading_names,
+            trend_names,
             rows
         )
 
