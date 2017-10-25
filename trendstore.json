@@ -1,61 +1,65 @@
 {
-    "name": "airbox",
     "data_source": "aireas",
     "entity_type": "airbox",
     "granularity": "1 day",
     "partition_size": "86400",
-    "trends": [
+    "parts": [
         {
-            "name": "AmbHum",
-            "data_type": "double precision"
-        },
-        {
-            "name": "PM1",
-            "data_type": "double precision"
-        },
-        {
-            "name": "WBGT",
-            "data_type": "double precision"
-        },
-        {
-            "name": "UFP",
-            "data_type": "double precision"
-        },
-        {
-            "name": "PM25",
-            "data_type": "double precision"
-        },
-        {
-            "name": "Ozon",
-            "data_type": "double precision"
-        },
-        {
-            "name": "PM10",
-            "data_type": "double precision"
-        },
-        {
-            "name": "Temp",
-            "data_type": "double precision"
-        },
-        {
-            "name": "RelHum",
-            "data_type": "double precision"
-        },
-        {
-            "name": "AmbTemp",
-            "data_type": "double precision"
-        },
-        {
-            "name": "NO2",
-            "data_type": "double precision"
-        },
-        {
-            "name": "GPS.lat",
-            "data_type": "double precision"
-        },
-        {
-            "name": "GPS.lon",
-            "data_type": "double precision"
+            "name": "airbox",
+            "trends": [
+                {
+                    "name": "AmbHum",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "PM1",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "WBGT",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "UFP",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "PM25",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "Ozon",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "PM10",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "Temp",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "RelHum",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "AmbTemp",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "NO2",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "GPS.lat",
+                    "data_type": "double precision"
+                },
+                {
+                    "name": "GPS.lon",
+                    "data_type": "double precision"
+                }
+            ]
         }
     ]
 }
