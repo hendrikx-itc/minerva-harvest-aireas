@@ -32,7 +32,7 @@ class Parser(HarvestParserTrend):
 
         data = json.load(stream)
 
-        rows = []
+        rows_by_timestamp = {}
 
         for measurement in data:
             timestamp_int = measurement['last_measurement']['calibrated']['when']['$date']
@@ -40,6 +40,12 @@ class Parser(HarvestParserTrend):
             timestamp = datetime.datetime.fromtimestamp(
                 timestamp_int / 1000.0, None
             )
+
+            rows = rows_by_timestamp.get(timestamp)
+
+            if rows is None:
+                rows = []
+                rows_by_timestamp[timestamp] = rows
 
             readings = measurement['last_measurement']['calibrated']['readings']
             reading_values = [
@@ -54,10 +60,10 @@ class Parser(HarvestParserTrend):
 
         trend_names = [meas_name for meas_name, mapping in reading_mapppings]
 
-        yield DefaultPackage(
-            create_granularity('1 day'),
-            timestamp,
-            trend_names,
-            rows
-        )
-
+        for timestamp, rows in rows_by_timestamp.items():
+            yield DefaultPackage(
+                create_granularity('1 day'),
+                timestamp,
+                trend_names,
+                rows
+            )
