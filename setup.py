@@ -5,7 +5,7 @@ from setuptools import setup
 __author__ = "Hendrikx ITC"
 
 setup(
-    name="minerva_harvest_aireas",
+    name="minerva-harvest-aireas",
     version="1.0.0",
     description=__doc__,
     author=__author__,
