@@ -6,7 +6,6 @@ __author__ = "Hendrikx ITC"
 
 setup(
     name="minerva-harvest-aireas",
-    description='Minerva harvest plugin for aireas json data',
     version="1.0.0",
     description=__doc__,
     author=__author__,
