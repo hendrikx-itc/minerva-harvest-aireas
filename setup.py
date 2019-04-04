@@ -9,6 +9,7 @@ setup(
     version="1.0.0",
     description=__doc__,
     author=__author__,
+    author_email='info@hendrikx-itc.nl',
     install_requires=["minerva"],
     packages=["minerva_harvest_aireas"],
     package_dir={"": "src"},
