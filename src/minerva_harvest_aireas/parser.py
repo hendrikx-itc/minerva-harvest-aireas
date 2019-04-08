@@ -2,37 +2,36 @@ import datetime
 import json
 
 from minerva.harvest.plugin_api_trend import HarvestParserTrend
-from minerva.storage.trend.datapackage import DataPackage
+from minerva.storage.trend.datapackage import DataPackage, DataPackageType
+from minerva.directory.entityref import entity_alias_ref_class
+from minerva.storage.trend.trend import Trend
 from minerva.storage.trend.granularity import create_granularity
 
+AireasPackageType = DataPackageType(entity_alias_ref_class('airbox', 'airbox'), lambda x: 'airbox', 'airbox')
 
 class Parser(HarvestParserTrend):
     def __init__(self, config):
         self.config = config
 
-    def load_packages(self, stream, name):
+    def packages(self, stream, name):
         reading_mapppings = [
-            ('AmbHum', lambda readings: readings.get('AmbHum')),  # 84.37
-            ('PM1', lambda readings: readings.get('PM1')),      # 3.0
-            ('WBGT', lambda readings: readings.get('WBGT')),     # 0.0
-            ('UFP', lambda readings: readings.get('AmbHum')),      # 0.0
-            ('PM25', lambda readings: readings.get('AmbHum')),     # 3.0
-            ('Ozon', lambda readings: readings.get('AmbHum')),     # 0.0
-            ('PM10', lambda readings: readings.get('AmbHum')),     # 6.0
-            ('Temp', lambda readings: readings.get('AmbHum')),     # 12.92
-            ('RelHum', lambda readings: readings.get('AmbHum')),   # 57.35
-            ('AmbTemp', lambda readings: readings.get('AmbHum')),  # 13.23
-            ('NO2', lambda readings: readings.get('AmbHum')),      # 63.9
+            ('AmbHum', lambda readings: readings.get('AmbHum')),
+            ('PM1', lambda readings: readings.get('PM1')),
+            ('UFP', lambda readings: readings.get('UFP')),
+            ('PM25', lambda readings: readings.get('PM25')),
+            ('Ozon', lambda readings: readings.get('Ozon')),
+            ('PM10', lambda readings: readings.get('PM10')),
+            ('Temp', lambda readings: readings.get('Temp')),
+            ('RelHum', lambda readings: readings.get('RelHum')),
+            ('AmbTemp', lambda readings: readings.get('AmbTemp')),
+            ('NO2', lambda readings: readings.get('NO2')),
             ('GPS.lat', lambda readings: readings.get('GPS')['lat']),
-            ('GPS.lon', lambda readings: readings.get('GPS')['lon'])  #
-                        #   "lat": 5134.187115,
-                        #   "lon": 449.162761
-                        # }
+            ('GPS.lon', lambda readings: readings.get('GPS')['lon'])
         ]
 
         data = json.load(stream)
 
-        rows_by_timestamp = {}
+        rows = []
 
         for measurement in data:
             timestamp_int = measurement['last_measurement']['calibrated']['when']['$date']
@@ -41,29 +40,23 @@ class Parser(HarvestParserTrend):
                 timestamp_int / 1000.0, None
             )
 
-            rows = rows_by_timestamp.get(timestamp)
-
-            if rows is None:
-                rows = []
-                rows_by_timestamp[timestamp] = rows
-
             readings = measurement['last_measurement']['calibrated']['readings']
             reading_values = [
-                mapping(readings)
-                for meas_name, mapping in reading_mapppings
+                str(measurement['_id']),
+                timestamp,
+                [
+                    mapping(readings)
+                    for meas_name, mapping in reading_mapppings
+                ]
             ]
 
-            rows.append((
-                'airbox={}'.format(measurement['_id']),
-                reading_values
-            ))
+            rows.append(reading_values)
 
-        trend_names = [meas_name for meas_name, mapping in reading_mapppings]
+        trends = [Trend(0, meas_name, float, 0, meas_name) for meas_name, mapping in reading_mapppings]
 
-        for timestamp, rows in rows_by_timestamp.items():
-            yield DataPackage(
-                create_granularity('1 day'),
-                timestamp,
-                trend_names,
-                rows
-            )
+        yield DataPackage(
+            AireasPackageType,
+            create_granularity('1 day'),
+            trends,
+            rows
+        )

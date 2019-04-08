@@ -1,6 +1,7 @@
 {
     "data_source": "aireas",
     "entity_type": "airbox",
+    "alias_type": "airbox",
     "granularity": "1 day",
     "partition_size": "86400",
     "parts": [
