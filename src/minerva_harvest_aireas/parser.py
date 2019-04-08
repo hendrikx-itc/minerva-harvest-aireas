@@ -2,7 +2,7 @@ import datetime
 import json
 
 from minerva.harvest.plugin_api_trend import HarvestParserTrend
-from minerva.storage.trend.datapackage import DefaultPackage
+from minerva.storage.trend.datapackage import DataPackage
 from minerva.storage.trend.granularity import create_granularity
 
 
@@ -61,7 +61,7 @@ class Parser(HarvestParserTrend):
         trend_names = [meas_name for meas_name, mapping in reading_mapppings]
 
         for timestamp, rows in rows_by_timestamp.items():
-            yield DefaultPackage(
+            yield DataPackage(
                 create_granularity('1 day'),
                 timestamp,
                 trend_names,
